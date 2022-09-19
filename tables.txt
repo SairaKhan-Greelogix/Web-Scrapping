@@ -1,0 +1,89 @@
+
+// Categories TABLE. ( Storing all categories ).
+
+CREATE TABLE categories(
+    id INT NOT NULL,
+    name VARCHAR(500) NOT NULL,
+    link VARCHAR(500) NOT NULL,
+    parent_category INT NOT NULL,
+    PRIMARY KEY( id )
+)
+
+
+// Product categories TABLE ( storing relationship between categories and products ).
+
+CREATE TABLE product_categories(
+    product_id INT NOT NULL,
+    category_id int NOT NULL,
+    PRIMARY KEY( product_id, category_id ),
+    FOREIGN KEY( product_id ) REFERENCES product( id )
+    FOREIGN KEY( category_id ) REFERENCES categories( id )
+)
+
+
+// Diseases TABLE. (Stores info of disease).
+
+CREATE TABLE diseases(
+    id INT NOT NULL,
+    name VARCHAR(500) NOT NULL,
+    link VARCHAR(500) NOT NULL,
+    disease_content longtext,
+    PRIMARY KEY( id )
+)
+
+
+// Product Diseases. ( relationship between diseases and products ).
+
+CREATE TABLE product_diseases (
+    product_id INT NOT NULL,
+    disease_id INT NOT NULL,
+    PRIMARY KEY( product_id, disease_id ),
+    FOREIGN KEY( product_id ) REFERENCES product( id )
+    FOREIGN KEY( disease_id ) REFERENCES diseases( id )
+)
+
+
+// Formoulae table (storing info of formoulae ).
+
+CREATE TABLE formoulae(
+    id INT NOT NULL,
+    name VARCHAR(500) NOT NULL,
+    link VARCHAR(500) NOT NULL,
+    PRIMARY KEY( id )
+);
+
+// Product Formoulae. ( relationship between formoulae and products ).
+
+CREATE TABLE product_formoulae (
+    product_id INT NOT NULL,
+    formoulae_id INT NOT NULL,
+    PRIMARY KEY( product_id, formoulae_id ),
+    FOREIGN KEY( product_id ) REFERENCES product( id ),
+    FOREIGN KEY( formoulae_id ) REFERENCES formoulae( id )
+)
+
+
+//Product table.
+
+CREATE table product (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(500) NOT NULL,
+    image VARCHAR(500),
+    brand_id INT,
+    prescription_required BOOLEAN DEFAULT false,
+    prouct_pack_size VARCHAR(50),
+    prouct_type VARCHAR(50),      
+    strip_per_pack INT,
+    product_discount INT,  
+    product_buy_limit INT, 
+    product_stock_status VARCHAR(50),
+    pack_size VARCHAR(50),
+    pack_limit INT,
+    strip_limit VARCHAR(20),
+    discounted_price FLOAT NOT NULL,
+    original_price FLOAT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY( brand_id ) REFERENCES brands( id )
+);
+
+
