@@ -1,6 +1,17 @@
 <?php
 
+
+$url = 'https://dawaai.pk/otc/c15-serum-30-ml-bottle-49581.html?source=Popular%20Products';
+$url = 'https://dawaai.pk/medicine/atarax-25mg-515.html';
+$url = 'https://dawaai.pk/medicine/amclav-8-17157.html';
+$url = 'https://dawaai.pk/medicine/acicon-39951.html';
+$url = 'https://dawaai.pk/medicine/panadol-drips-287.html';
+$url = 'https://dawaai.pk/otc/premium-disposable-protective-mask-imported-44199.html?source=Category%20Page';
+$url = 'https://dawaai.pk/otc/safi-syrup-1107.html?source=Category%20Page';
 $url = 'https://dawaai.pk/otc/durex-play-massage-2-in-1-200ml-purple-37676.html?source=Popular%20Products';
+$url = 'https://dawaai.pk/otc/enfamil-a-ar-powder-400g-37017.html?source=Category%20Page';
+$url = 'https://dawaai.pk/medicine/advantan-ointment-1550.html';
+
 
 // Find Product Id.
 $lastPart = substr($url, strrpos($url, '-', -1 )+1 , -1 );
@@ -556,26 +567,35 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 						// Insert data as brand doesnot exist already.
 						$insert_query = 'INSERT INTO brands (brand_name, brand_link ) VALUES ( "'.$brand_name.'", "'.$brand_link.'" )';
 						$add_brand    = mysqli_query($conn, $insert_query);
-						$brand_id     = $conn->insert_id;
+						if( $conn->insert_id > 0 ) {
+							$brand_id     = $conn->insert_id;	
+						} else {
+							die( " Brand insertion error ". mysqli_error( $conn ) );
+						}
+						
 					}	else {
 						// get brand_id.
 						$get_brand_id = mysqli_fetch_array( $brand_exists );
 						$brand_id = $get_brand_id['id'];
 					}
 
-					// Create Product.
-					$insert_product_query = 'INSERT INTO product ( name, image, brand_id, prescription_required, product_pack_size, product_type, strip_per_pack, product_discount, product_buy_limit, product_stock_status, pack_size, pack_limit, strip_limit, discounted_price, original_price, description, directions_for_use, safety_information, introduction, benefits, primary_uses, indications, side_effects, warnings, contraindications, overview, faqs ) VALUES ( "'.$product_name.'", "'.$image.'", '.$brand_id.' , "'.$prescription_required.'", "'.$product_pack_size.'" , "'.$product_type.'", '.$strip_per_pack.', "'.$product_discount.'", "'.$product_buy_limit.'", "'.$product_stock_status.'", "'.$pack_size.'", '.$pack_limit.', "'.$strip_limit.'", "'.$discounted_price.'", "'.$original_price.'", "'.$description.'", "'.$Directions_for_use.'", "'.$Safety_information.'", "'.$Introduction.'", "'.$Key_benefits.'", "'.$Primary_uses.'", "'.$Indications.'", "'.$Side_effects.'", "'.$Warnings.'", "'.$Contraindications.'", "'.$Overview.'", "'.$FAQS.'")';
-						// echo "<pre>";
-						// echo $insert_product_query;
-						$insert_product_result = mysqli_query($conn, $insert_product_query);
-					
-					$product_id = $conn->insert_id;
+					if( !empty( $brand_id ) ) {
+						// Create Product.
+						$insert_product_query = 'INSERT INTO product ( name, image, brand_id, prescription_required, product_pack_size, product_type, strip_per_pack, product_discount, product_buy_limit, product_stock_status, pack_size, pack_limit, strip_limit, discounted_price, original_price, description, directions_for_use, safety_information, introduction, benefits, primary_uses, indications, side_effects, warnings, contraindications, overview, faqs ) VALUES ( "'.$product_name.'", "'.$image.'", '.$brand_id.' , "'.$prescription_required.'", "'.$product_pack_size.'" , "'.$product_type.'", '.$strip_per_pack.', "'.$product_discount.'", "'.$product_buy_limit.'", "'.$product_stock_status.'", "'.$pack_size.'", '.$pack_limit.', "'.$strip_limit.'", "'.$discounted_price.'", "'.$original_price.'", "'.$description.'", "'.$Directions_for_use.'", "'.$Safety_information.'", "'.$Introduction.'", "'.$Key_benefits.'", "'.$Primary_uses.'", "'.$Indications.'", "'.$Side_effects.'", "'.$Warnings.'", "'.$Contraindications.'", "'.$Overview.'", "'.$FAQS.'")';
+							// echo "<pre>";
+							// echo $insert_product_query;
+							$insert_product_result = mysqli_query($conn, $insert_product_query);
+						
+						$product_id = $conn->insert_id;
 
-					if( $product_id > 0 ) {
-						// echo "Data inserted";
-					} else {
-						// die( " Product insertion Error " . mysqli_error( $conn ) );
+						if( $product_id > 0 ) {
+							// echo "Data inserted";
+						} else {
+							die( " Product insertion Error " . mysqli_error( $conn ) );
+						}
+
 					}
+					
 
 					// Categories.
 					// if( count( $categories ) !== 0 ) {
@@ -619,10 +639,12 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 						$diseases_ids = array();
 						foreach( $diseases as $disease ) {
 							// Check if disease exists.
+							// echo  $disease['disease_name'];
 							$disease_query = "SELECT id FROM diseases WHERE disease_name = '".ltrim( $disease['disease_name'] )."'";
 							$get_disease   = mysqli_query( $conn, $disease_query );
 							// echo "<pre>";
 							// print_r( $get_disease );
+							
 							if( $get_disease->num_rows === 0 ) {
 									// echo "In if";
 									$insert_disease = 'INSERT INTO diseases ( disease_name, disease_link, disease_content ) VALUES ( "'.$disease['disease_name'].'", "'.$disease['disease_link'].'", "'.str_replace('"', "'", $disease['disease_content'] ).'" )';
